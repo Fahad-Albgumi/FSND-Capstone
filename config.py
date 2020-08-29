@@ -4,6 +4,13 @@ SECRET_KEY = os.urandom(32)
 # Grabs the folder where the script runs.
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+database_setup = {
+   "database_name_production" : "agency",
+   "user_name" : "fahad", # default postgres user name
+   "password" : "fahad209", # if applicable. If no password, just type in None
+   "port" : "localhost:5432" # default postgres port
+}
+
 auth0_config = {
     "AUTH0_DOMAIN" : "fsnd-matthew.eu.auth0.com",
     "ALGORITHMS" : ["RS256"],
