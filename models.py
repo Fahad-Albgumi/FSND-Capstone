@@ -11,7 +11,7 @@ from config import database_setup
 
 # Use Production Database.
 # If run locally, key does not exist, so use locally set database instead.
-database_path = os.environ.get('DATABASE_URL', "postgres://{}:{}@{}/{}".format(database_setup["user_name"], database_setup["password"], database_setup["port"], database_setup["database_name_test"]))
+database_path = os.environ['DATABASE_URL']
 
 db = SQLAlchemy()
 
