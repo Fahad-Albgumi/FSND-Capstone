@@ -16,15 +16,19 @@ API_AUDIENCE = auth0_config['API_AUDIENCE']
 #----------------------------------------------------------------------------#
 # AuthError Exception
 #----------------------------------------------------------------------------#
+
+
 class AuthError(Exception):
     '''A standardized way to communicate auth failure modes'''
+
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
-    
+
 #----------------------------------------------------------------------------#
 # Auth Wrapper Methods
 #----------------------------------------------------------------------------#
+
 
 def get_token_auth_header():
     """Obtains the Access Token from the Authorization Header
@@ -69,6 +73,7 @@ def get_token_auth_header():
     # When everyhting is fine, get the token which is the second part of the Authorization Header & return it
     return parts[1]
 
+
 def check_permissions(permission, payload):
     ''' Check if permission is part of payload
     *Input
@@ -82,10 +87,10 @@ def check_permissions(permission, payload):
       - requested permission string is in the payload permissions array
     '''
     if 'permissions' not in payload:
-                        raise AuthError({
-                            'code': 'invalid_claims',
-                            'description': 'Permissions not included in JWT.'
-                        }, 400)
+        raise AuthError({
+            'code': 'invalid_claims',
+            'description': 'Permissions not included in JWT.'
+        }, 400)
 
     if permission not in payload['permissions']:
         raise AuthError({
@@ -93,6 +98,7 @@ def check_permissions(permission, payload):
             'description': 'Permission not found.'
         }, 403)
     return True
+
 
 def verify_decode_jwt(token):
     ''' Decodes JWT Token or raises appropiate Error Messages
@@ -111,7 +117,7 @@ def verify_decode_jwt(token):
     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
     unverified_header = jwt.get_unverified_header(token)
-    
+
     # Check if Key id is in unverified header
     if 'kid' not in unverified_header:
         raise AuthError({
@@ -119,7 +125,7 @@ def verify_decode_jwt(token):
             'description': 'Authorization malformed.'
         }, 401)
 
-    rsa_key = {} # initialize empty private rsa key as dict
+    rsa_key = {}  # initialize empty private rsa key as dict
     for key in jwks['keys']:
         if key['kid'] == unverified_header['kid']:
             rsa_key = {
@@ -164,9 +170,9 @@ def verify_decode_jwt(token):
 
     # If no payload has been returned yet, raise error.
     raise AuthError({
-                'code': 'invalid_header',
+        'code': 'invalid_header',
                 'description': 'Unable to find the appropriate key.'
-            }, 400)
+    }, 400)
 
 
 # TODO DONE implement @requires_auth(permission) decorator method

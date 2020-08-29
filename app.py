@@ -8,9 +8,10 @@ from config import pagination
 
 ROWS_PER_PAGE = pagination['example']
 
+
 def create_app(test_config=None):
   '''create and configure the app'''
-  
+
   app = Flask(__name__)
   setup_db(app)
   # db_drop_and_create_all() # uncomment this if you want to start a new database on app refresh
@@ -20,11 +21,13 @@ def create_app(test_config=None):
   #----------------------------------------------------------------------------#
 
   CORS(app)
-  # CORS Headers 
+  # CORS Headers
   @app.after_request
   def after_request(response):
-      response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
-      response.headers.add('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE,OPTIONS')
+      response.headers.add('Access-Control-Allow-Headers',
+                           'Content-Type,Authorization,true')
+      response.headers.add('Access-Control-Allow-Methods',
+                           'GET,PATCH,POST,DELETE,OPTIONS')
       return response
 
   #----------------------------------------------------------------------------#
@@ -57,9 +60,9 @@ def create_app(test_config=None):
     '''
     # Get page from request. If not given, default to 1
     page = request.args.get('page', 1, type=int)
-    
+
     # Calculate start and end slicing
-    start =  (page - 1) * ROWS_PER_PAGE
+    start = (page - 1) * ROWS_PER_PAGE
     end = start + ROWS_PER_PAGE
 
     # Format selection into list of dicts and return sliced
@@ -69,8 +72,8 @@ def create_app(test_config=None):
   #----------------------------------------------------------------------------#
   #  API Endpoints
   #  ----------------------------------------------------------------
-  #  NOTE:  For explanation of each endpoint, please have look at the README.md file. 
-  #         DOC Strings only contain short description and list of test classes 
+  #  NOTE:  For explanation of each endpoint, please have look at the README.md file.
+  #         DOC Strings only contain short description and list of test classes
   #----------------------------------------------------------------------------#
 
   #----------------------------------------------------------------------------#
@@ -94,8 +97,8 @@ def create_app(test_config=None):
       abort(404, {'message': 'no actors found in database.'})
 
     return jsonify({
-      'success': True,
-      'actors': actors_paginated
+        'success': True,
+        'actors': actors_paginated
     })
 
   @app.route('/actors', methods=['POST'])
@@ -113,7 +116,7 @@ def create_app(test_config=None):
     body = request.get_json()
 
     if not body:
-          abort(400, {'message': 'request does not contain a valid JSON body.'})
+        abort(400, {'message': 'request does not contain a valid JSON body.'})
 
     # Extract name and age value from request body
     name = body.get('name', None)
@@ -131,15 +134,15 @@ def create_app(test_config=None):
 
     # Create new instance of Actor & insert it.
     new_actor = (Actor(
-          name = name, 
-          age = age,
-          gender = gender
-          ))
+        name=name,
+        age=age,
+        gender=gender
+    ))
     new_actor.insert()
 
     return jsonify({
-      'success': True,
-      'created': new_actor.id
+        'success': True,
+        'created': new_actor.id
     })
 
   @app.route('/actors/<actor_id>', methods=['PATCH'])
@@ -167,7 +170,8 @@ def create_app(test_config=None):
 
     # Abort 404 if no actor with this id exists
     if not actor_to_update:
-      abort(404, {'message': 'Actor with id {} not found in database.'.format(actor_id)})
+      abort(
+          404, {'message': 'Actor with id {} not found in database.'.format(actor_id)})
 
     # Extract name and age value from request body
     # If not given, set existing field values, so no update will happen
@@ -185,9 +189,9 @@ def create_app(test_config=None):
 
     # Return success, updated actor id and updated actor as formatted list
     return jsonify({
-      'success': True,
-      'updated': actor_to_update.id,
-      'actor' : [actor_to_update.format()]
+        'success': True,
+        'updated': actor_to_update.id,
+        'actor': [actor_to_update.format()]
     })
 
   @app.route('/actors/<actor_id>', methods=['DELETE'])
@@ -204,21 +208,22 @@ def create_app(test_config=None):
     # Abort if no actor_id has been provided
     if not actor_id:
       abort(400, {'message': 'please append an actor id to the request url.'})
-  
+
     # Find actor which should be deleted by id
     actor_to_delete = Actor.query.filter(Actor.id == actor_id).one_or_none()
 
     # If no actor with given id could found, abort 404
     if not actor_to_delete:
-        abort(404, {'message': 'Actor with id {} not found in database.'.format(actor_id)})
-    
+        abort(
+            404, {'message': 'Actor with id {} not found in database.'.format(actor_id)})
+
     # Delete actor from database
     actor_to_delete.delete()
-    
+
     # Return success and id from deleted actor
     return jsonify({
-      'success': True,
-      'deleted': actor_id
+        'success': True,
+        'deleted': actor_id
     })
 
   #----------------------------------------------------------------------------#
@@ -242,8 +247,8 @@ def create_app(test_config=None):
       abort(404, {'message': 'no movies found in database.'})
 
     return jsonify({
-      'success': True,
-      'movies': movies_paginated
+        'success': True,
+        'movies': movies_paginated
     })
 
   @app.route('/movies', methods=['POST'])
@@ -261,7 +266,7 @@ def create_app(test_config=None):
     body = request.get_json()
 
     if not body:
-          abort(400, {'message': 'request does not contain a valid JSON body.'})
+        abort(400, {'message': 'request does not contain a valid JSON body.'})
 
     # Extract title and release_date value from request body
     title = body.get('title', None)
@@ -276,14 +281,14 @@ def create_app(test_config=None):
 
     # Create new instance of movie & insert it.
     new_movie = (Movie(
-          title = title, 
-          release_date = release_date
-          ))
+        title=title,
+        release_date=release_date
+    ))
     new_movie.insert()
 
     return jsonify({
-      'success': True,
-      'created': new_movie.id
+        'success': True,
+        'created': new_movie.id
     })
 
   @app.route('/movies/<movie_id>', methods=['PATCH'])
@@ -311,7 +316,8 @@ def create_app(test_config=None):
 
     # Abort 404 if no movie with this id exists
     if not movie_to_update:
-      abort(404, {'message': 'Movie with id {} not found in database.'.format(movie_id)})
+      abort(
+          404, {'message': 'Movie with id {} not found in database.'.format(movie_id)})
 
     # Extract title and age value from request body
     # If not given, set existing field values, so no update will happen
@@ -327,9 +333,9 @@ def create_app(test_config=None):
 
     # Return success, updated movie id and updated movie as formatted list
     return jsonify({
-      'success': True,
-      'edited': movie_to_update.id,
-      'movie' : [movie_to_update.format()]
+        'success': True,
+        'edited': movie_to_update.id,
+        'movie': [movie_to_update.format()]
     })
 
   @app.route('/movies/<movie_id>', methods=['DELETE'])
@@ -346,21 +352,22 @@ def create_app(test_config=None):
     # Abort if no movie_id has been provided
     if not movie_id:
       abort(400, {'message': 'please append an movie id to the request url.'})
-  
+
     # Find movie which should be deleted by id
     movie_to_delete = Movie.query.filter(Movie.id == movie_id).one_or_none()
 
     # If no movie with given id could found, abort 404
     if not movie_to_delete:
-        abort(404, {'message': 'Movie with id {} not found in database.'.format(movie_id)})
-    
+        abort(
+            404, {'message': 'Movie with id {} not found in database.'.format(movie_id)})
+
     # Delete movie from database
     movie_to_delete.delete()
-    
+
     # Return success and id from deleted movie
     return jsonify({
-      'success': True,
-      'deleted': movie_id
+        'success': True,
+        'deleted': movie_id
     })
 
   #----------------------------------------------------------------------------#
@@ -370,38 +377,38 @@ def create_app(test_config=None):
   @app.errorhandler(422)
   def unprocessable(error):
       return jsonify({
-                      "success": False, 
-                      "error": 422,
-                      "message": get_error_message(error,"unprocessable")
-                      }), 422
+          "success": False,
+          "error": 422,
+          "message": get_error_message(error, "unprocessable")
+      }), 422
 
   @app.errorhandler(400)
   def bad_request(error):
       return jsonify({
-                      "success": False, 
-                      "error": 400,
-                      "message": get_error_message(error, "bad request")
-                      }), 400
+          "success": False,
+          "error": 400,
+          "message": get_error_message(error, "bad request")
+      }), 400
 
   @app.errorhandler(404)
   def ressource_not_found(error):
       return jsonify({
-                      "success": False, 
-                      "error": 404,
-                      "message": get_error_message(error, "resource not found")
-                      }), 404
+          "success": False,
+          "error": 404,
+          "message": get_error_message(error, "resource not found")
+      }), 404
 
   @app.errorhandler(AuthError)
-  def authentification_failed(AuthError): 
+  def authentification_failed(AuthError):
       return jsonify({
-                      "success": False, 
-                      "error": AuthError.status_code,
-                      "message": AuthError.error['description']
-                      }), AuthError.status_code
-
+          "success": False,
+          "error": AuthError.status_code,
+          "message": AuthError.error['description']
+      }), AuthError.status_code
 
   # After every endpoint has been created, return app
   return app
+
 
 app = create_app()
 
